@@ -17,6 +17,9 @@ function RTCRtpSender(pc, data) {
 	this._pc = pc;
 	this.track = data.track ? pc.getOrCreateTrack(data.track) : null;
 	this.params = data.params || {};
+	if (this.track) {
+		this.dtmf = pc.createDTMFSender(this.track);
+	}
 }
 
 RTCRtpSender.prototype.getParameters = function () {
@@ -54,7 +57,7 @@ RTCRtpSender.prototype.replaceTrack = function (withTrack) {
 
 	return new Promise((resolve, reject) => {
 		function onResultOK(result) {
-			self.track = result.track ? new MediaStreamTrack(result.track) : null;
+			self.track = result.track ? MediaStreamTrack.findOrCreate(result.track) : null;
 			resolve();
 		}
 
